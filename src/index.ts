@@ -1,3 +1,3 @@
 import EthereumDater from "./lib/dater";
 
-export { EthereumDater };
+export default EthereumDater;
