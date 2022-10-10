@@ -1,10 +1,10 @@
 # Ethereum Block To Date
 
-An efficient and accurate way to search for Ethereum block numbers by date using an interpolation search algorithm (O(log(log(n))))
+An efficient and accurate way to search for Ethereum block numbers by date using an [interpolation search](https://en.wikipedia.org/wiki/Interpolation_search) algorithm (O(log(log(n))))
 
 Current version supports Web3.js and ethers.js providers
 
-Finds blocks 2x faster, and uses around half the RPC calls as [GitHub](https://github.com/monosux/ethereum-block-by-date/)
+Finds blocks 2x faster than [ethereum-block-by-date](https://github.com/monosux/ethereum-block-by-date/), while using half the RPC calls
 
 ## Installation
 
@@ -27,7 +27,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider(process.env.PROVIDER));
 const dater = new EthereumDater(
   web3.eth, // Web3 eth provider, required.
   {
-    accuracy, // Optional. Returns block n seconds within this value if available. By default 10.
+    accuracy, // Optional. Returns a block number within n seconds this value if possible. By default 10.
     maxRetries, // Optional. Max amount of RPC calls allowed. By default 15.
   }
 );
@@ -50,11 +50,11 @@ const dater = new EthDater(
 
 ```javascript
 // Getting block by date:
-let block = await dater.getBlock(
+const block = await dater.getBlock(
   "2016-07-20T13:20:40Z" // Any valid Date() constructor value
 );
 
-/* Returns an object: {
+/* Returns {
   block: {
     number: number; // Resolved block number
     timestamp: number; // Timestamp the resolved block was mined
@@ -67,7 +67,7 @@ let block = await dater.getBlock(
 
 Note: if date is out of range (before genesis block or in the future), getBlock() will throw a relevant error
 
-## Need Help
+## Found a bug? Improvement Proposal?
 
 If you need any help, please contact me via GitHub issues page: [GitHub](https://github.com/kai-thompson/ethereum-date-to-block/issues)
 
