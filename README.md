@@ -71,6 +71,6 @@ Note: if date is out of range (before genesis block or in the future), getBlock(
 
 ## Found a bug? Improvement Proposal?
 
-If you need any help, please contact me via GitHub issues page: [GitHub](https://github.com/kai-thompson/ethereum-date-to-block/issues)
+If you need any help, please contact me via GitHub issues page: [GitHub](https://github.com/kai-thompson/eth-date-to-block/issues)
 
 Feel free to open new issues and pull requests!
