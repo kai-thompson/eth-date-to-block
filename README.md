@@ -13,7 +13,7 @@ Finds blocks 2x faster than [ethereum-block-by-date](https://github.com/monosux/
 Use npm:
 
 ```
-npm i ethereum-block-to-date
+npm i eth-date-to-block
 ```
 
 ## Usage
@@ -21,30 +21,30 @@ npm i ethereum-block-to-date
 ### Usage with ES modules
 
 ```javascript
-import EthereumDater from "ethereum-block-to-date";
+import EthereumDater from "eth-date-to-block";
 import Web3 from "web3";
 
 const web3 = new Web3(new Web3.providers.HttpProvider(process.env.PROVIDER));
 
 const dater = new EthereumDater(
-  web3.eth, // Web3 eth provider, required.
-  {
-    accuracy, // Optional. Returns a block number within n seconds this value if possible. By default 10.
-    maxRetries, // Optional. Max amount of RPC calls allowed. By default 15.
-  }
+    web3.eth, // Web3 eth provider, required.
+    {
+        accuracy, // Optional. Returns a block number within n seconds this value if possible. By default 10.
+        maxRetries, // Optional. Max amount of RPC calls allowed. By default 15.
+    },
 );
 ```
 
 ### Usage with CommonJS
 
 ```javascript
-const EthDater = require("ethereum-block-to-date");
+const EthDater = require("eth-date-to-block");
 const { ethers } = require("ethers");
 
 const ethersProvider = ethers.providers.JsonRpcProvider(process.env.PROVIDER);
 
 const dater = new EthDater(
-  ethersProvider // Ethers provider, required.
+    ethersProvider, // Ethers provider, required.
 );
 ```
 
@@ -53,7 +53,7 @@ const dater = new EthDater(
 ```javascript
 // Getting block by date:
 const block = await dater.getBlock(
-  "2016-07-20T13:20:40Z" // Any valid Date() constructor value
+    "2016-07-20T13:20:40Z", // Any valid Date() constructor value
 );
 
 /* Returns {
@@ -73,4 +73,4 @@ Note: if date is out of range (before genesis block or in the future), getBlock(
 
 If you need any help, please contact me via GitHub issues page: [GitHub](https://github.com/kai-thompson/ethereum-date-to-block/issues)
 
-Feel free to open new issues and pull requests! 
+Feel free to open new issues and pull requests!
