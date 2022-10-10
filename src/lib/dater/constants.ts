@@ -1,0 +1,3 @@
+export const ETH_STARTING_TIMESTAMP = 1438269988;
+export const DEFAULT_ACCURACY = 10;
+export const DEFAULT_MAX_RETRIES = 15;
