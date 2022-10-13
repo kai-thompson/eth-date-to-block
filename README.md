@@ -1,4 +1,4 @@
-# Ethereum Block To Date
+# Ethereum Date to Block
 
 An efficient and accurate way to search for Ethereum block numbers by date
 
