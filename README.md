@@ -10,12 +10,13 @@ Finds blocks 2x faster than [ethereum-block-by-date](https://github.com/monosux/
 
 ## Installation
 
-Use npm:
+Using npm:
 
 ```
 npm i eth-date-to-block
 ```
 
+Using yarn:
 ```
 yarn add eth-date-to-block
 ```
