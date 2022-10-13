@@ -16,6 +16,10 @@ Use npm:
 npm i eth-date-to-block
 ```
 
+```
+yarn add eth-date-to-block
+```
+
 ## Usage
 
 ### Usage with ES modules
