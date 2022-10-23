@@ -2,6 +2,8 @@
 
 An efficient and accurate way to search for Ethereum block numbers by date
 
+Support all EVM chains (Polygon, Fantom, Arbitrum, Avalanche, etc...)
+
 Uses an [interpolation search](https://en.wikipedia.org/wiki/Interpolation_search) algorithm
 
 Current version supports Web3.js and ethers.js providers

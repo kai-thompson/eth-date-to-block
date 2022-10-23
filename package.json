@@ -1,7 +1,7 @@
 {
     "name": "eth-date-to-block",
-    "version": "0.0.5",
-    "description": "A package to efficiently and accurately convert dates to Ethereum block numbers",
+    "version": "0.1.0",
+    "description": "A package to efficiently and accurately convert dates to Ethereum/L2 block numbers",
     "exports": {
         ".": {
             "import": {
