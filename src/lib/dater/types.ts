@@ -1,5 +1,5 @@
 export interface IEthereumDater {
-    getBlock(date: string): Promise<GetBlockResponse>;
+    getBlock(date: string): Promise<DaterBlockInfo>;
 }
 
 export interface EthereumDaterConfig {
@@ -7,7 +7,7 @@ export interface EthereumDaterConfig {
     maxRetries?: number;
 }
 
-export interface GetBlockResponse {
+export interface DaterBlockInfo {
     block: {
         number: number;
         timestamp: number;
