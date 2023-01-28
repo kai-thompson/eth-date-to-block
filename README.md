@@ -36,8 +36,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(process.env.PROVIDER));
 const dater = new EthereumDater(
     web3.eth, // Web3 eth provider, required.
     {
-        accuracy, // Optional. Returns a block number within n seconds this value if possible. By default 10.
-        maxRetries, // Optional. Max amount of RPC calls allowed. By default 15.
+        accuracy, // Optional. Returns a block number within an accuracy of n seconds. Default 10.
+        maxRetries, // Optional. Max amount of RPC calls allowed. Default 15.
     },
 );
 ```
@@ -45,12 +45,12 @@ const dater = new EthereumDater(
 ### Usage with CommonJS
 
 ```javascript
-const EthDater = require("eth-date-to-block");
+const EthereumDater = require("eth-date-to-block");
 const { ethers } = require("ethers");
 
 const ethersProvider = ethers.providers.JsonRpcProvider(process.env.PROVIDER);
 
-const dater = new EthDater(
+const dater = new EthereumDater(
     ethersProvider, // Ethers provider, required.
 );
 ```
