@@ -48,6 +48,7 @@ class EthereumDater implements IEthereumDater {
         return resolvedBlock;
     }
 
+    // require: startDate and endDate are different
     async getBlocks(
         startDate: number | string | Date,
         endDate: number | string | Date,
@@ -73,7 +74,7 @@ class EthereumDater implements IEthereumDater {
         const n = Math.floor(
             (endBlock.block.timestamp - startBlock.block.timestamp) /
                 secondsPerInterval,
-        );
+        ) + 2;
         // create return array
         const blocks = new Array(n);
         // get the block time
