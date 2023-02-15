@@ -74,7 +74,7 @@ class EthereumDater implements IEthereumDater {
         const n = Math.floor(
             (endBlock.block.timestamp - startBlock.block.timestamp) /
                 secondsPerInterval,
-        ) + 2;
+        ) + 1;
         // create return array
         const blocks = new Array(n);
         // get the block time
