@@ -1,9 +1,15 @@
 import NodeClient from "../node-client";
 
-import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater, BlockPosition } from "./types";
+import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater } from "./types";
 
 import { Provider } from "../types";
 import * as constants from "./constants";
+
+enum BlockPosition {
+    Before = "before",
+    After = "after",
+    Closest = "closest",
+}
 
 class EthereumDater implements IEthereumDater {
     private nodeClient: NodeClient;
@@ -29,7 +35,7 @@ class EthereumDater implements IEthereumDater {
 
     async getBlock(
         date: number | string | Date,
-        position: BlockPosition = "closest",
+        position: BlockPosition = BlockPosition.Closest,
     ): Promise<DaterBlockInfo> {
         await this.getInitialTimestamp();
         this.getTimestamp(date);
@@ -53,7 +59,7 @@ class EthereumDater implements IEthereumDater {
         startDate: number | string | Date,
         endDate: number | string | Date,
         secondsPerInterval: number,
-        position: BlockPosition = "closest",
+        position: BlockPosition = BlockPosition.After,
     ): Promise<DaterBlockInfo[]> {
         // make sure the interval is positive
         if (secondsPerInterval <= 0) {
@@ -90,7 +96,6 @@ class EthereumDater implements IEthereumDater {
                 (startBlock.block.timestamp + i * secondsPerInterval) * 1000,
             );
             // Find Block: disable eslint because we try to optimize request count and not time taken
-            // eslint-disable-next-line no-await-in-loop
             tempBlock = await this.checkBlock(
                 endBlock.block.number,
                 tempLo,
@@ -117,7 +122,7 @@ class EthereumDater implements IEthereumDater {
         high: number,
         low: number,
         blockTime: number,
-        position: BlockPosition = "closest",
+        position: BlockPosition = BlockPosition.Closest,
         depth: number = 0,
     ): Promise<DaterBlockInfo> {
         if (depth > this.maxRetries) {
@@ -141,60 +146,35 @@ class EthereumDater implements IEthereumDater {
             pos === low ||
             pos === high
         ) {
-            switch (position) {
-                case "before":
-                    if (currentBlockTimestamp > this.timestamp) {
-                        const prevBlock = await this.nodeClient.getBlock(
-                            pos - 1,
-                        );
-                        currentBlockTimestamp = Number(prevBlock.timestamp);
-                        depth += 1;
-                        pos -= 1;
-                    }
-                    return {
-                        block: {
-                            number: pos,
-                            timestamp: currentBlockTimestamp,
-                            date: new Date(currentBlockTimestamp * 1000),
-                        },
-                        retries: depth,
-                        secondsFromTarget: Math.ceil(
-                            this.timestamp - currentBlockTimestamp,
-                        ),
-                    };
-                case "after":
-                    if (currentBlockTimestamp < this.timestamp) {
-                        const nextBlock = await this.nodeClient.getBlock(
-                            pos + 1,
-                        );
-                        currentBlockTimestamp = Number(nextBlock.timestamp);
-                        depth += 1;
-                        pos += 1;
-                    }
-                    return {
-                        block: {
-                            number: pos,
-                            timestamp: currentBlockTimestamp,
-                            date: new Date(currentBlockTimestamp * 1000),
-                        },
-                        retries: depth,
-                        secondsFromTarget: Math.ceil(
-                            this.timestamp - currentBlockTimestamp,
-                        ),
-                    };
-                default:
-                    return {
-                        block: {
-                            number: pos,
-                            timestamp: currentBlockTimestamp,
-                            date: new Date(currentBlockTimestamp * 1000),
-                        },
-                        retries: depth,
-                        secondsFromTarget: Math.ceil(
-                            this.timestamp - currentBlockTimestamp,
-                        ),
-                    };
+            if (position ===  BlockPosition.Before && currentBlockTimestamp > this.timestamp) {
+                const prevBlock = await this.nodeClient.getBlock(
+                    pos - 1,
+                );
+                currentBlockTimestamp = Number(prevBlock.timestamp);
+                depth += 1;
+                pos -= 1;
             }
+        
+            if (position ===  BlockPosition.After && currentBlockTimestamp < this.timestamp) {
+                const nextBlock = await this.nodeClient.getBlock(
+                    pos + 1,
+                );
+                currentBlockTimestamp = Number(nextBlock.timestamp);
+                depth += 1;
+                pos += 1;
+            }
+
+            return {
+                block: {
+                    number: pos,
+                    timestamp: currentBlockTimestamp,
+                    date: new Date(currentBlockTimestamp * 1000),
+                },
+                retries: depth,
+                secondsFromTarget: Math.ceil(
+                    this.timestamp - currentBlockTimestamp,
+                ),
+            };
         }
 
         if (this.timestamp < currentBlockTimestamp) {
