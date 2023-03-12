@@ -16,3 +16,5 @@ export interface DaterBlockInfo {
     retries: number;
     secondsFromTarget: number;
 }
+
+export type BlockPosition = "before" | "closest" | "after";

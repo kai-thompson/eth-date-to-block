@@ -1,6 +1,6 @@
 import NodeClient from "../node-client";
 
-import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater } from "./types";
+import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater, BlockPosition } from "./types";
 
 import { Provider } from "../types";
 import * as constants from "./constants";
@@ -29,7 +29,7 @@ class EthereumDater implements IEthereumDater {
 
     async getBlock(
         date: number | string | Date,
-        position: string = "closest",
+        position: BlockPosition = "closest",
     ): Promise<DaterBlockInfo> {
         await this.getInitialTimestamp();
         this.getTimestamp(date);
@@ -53,7 +53,7 @@ class EthereumDater implements IEthereumDater {
         startDate: number | string | Date,
         endDate: number | string | Date,
         secondsPerInterval: number,
-        position: string = "closest",
+        position: BlockPosition = "closest",
     ): Promise<DaterBlockInfo[]> {
         // make sure the interval is positive
         if (secondsPerInterval <= 0) {
@@ -117,7 +117,7 @@ class EthereumDater implements IEthereumDater {
         high: number,
         low: number,
         blockTime: number,
-        position: string = "closest",
+        position: BlockPosition = "closest",
         depth: number = 0,
     ): Promise<DaterBlockInfo> {
         if (depth > this.maxRetries) {
