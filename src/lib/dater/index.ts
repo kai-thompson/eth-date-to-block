@@ -1,28 +1,20 @@
 import NodeClient from "../node-client";
 
-import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater } from "./types";
+import { DaterBlockInfo, EthereumDaterConfig, IEthereumDater, BlockPosition } from "./types";
 
 import { Provider } from "../types";
 import * as constants from "./constants";
 
-enum BlockPosition {
-    Before = "before",
-    After = "after",
-    Closest = "closest",
-}
-
 class EthereumDater implements IEthereumDater {
     private nodeClient: NodeClient;
 
-    private timestamp = 0;
+    private timestamp: number;
 
-    private date: Date = new Date(0);
+    private initialTimestamp!: number;
 
     private accuracy: number = constants.DEFAULT_ACCURACY;
 
     private maxRetries: number = constants.DEFAULT_MAX_RETRIES;
-
-    private initialTimestamp!: number;
 
     constructor(provider: Provider, config?: EthereumDaterConfig) {
         const { accuracy, maxRetries } = config || {};
@@ -35,10 +27,10 @@ class EthereumDater implements IEthereumDater {
 
     async getBlock(
         date: number | string | Date,
-        position: BlockPosition = BlockPosition.Closest,
+        position: BlockPosition = "closest",
     ): Promise<DaterBlockInfo> {
         await this.getInitialTimestamp();
-        this.getTimestamp(date);
+        this.setGlobalTimestamp(date);
 
         const currentBlock = await this.nodeClient.getBlockNumber();
         const totalTime =
@@ -59,15 +51,15 @@ class EthereumDater implements IEthereumDater {
         startDate: number | string | Date,
         endDate: number | string | Date,
         secondsPerInterval: number,
-        position: BlockPosition = BlockPosition.After,
+        position: BlockPosition = "closest",
     ): Promise<DaterBlockInfo[]> {
         // make sure the interval is positive
         if (secondsPerInterval <= 0) {
             throw new Error("Interval must be greater than 0");
         }
         // make sure that endDate > startDate
-        const startTime = new Date(startDate).getTime();
-        const endTime = new Date(endDate).getTime();
+        const startTime = this.getFormattedTimestamp(startDate);
+        const endTime = this.getFormattedTimestamp(endDate);
         if (endTime - startTime < 0) {
             throw new Error(`${endDate} is not before ${startDate}`);
         }
@@ -92,7 +84,7 @@ class EthereumDater implements IEthereumDater {
         let tempBlock = startBlock;
         for (let i = 1; i < n - 1; i += 1) {
             // required param
-            this.getTimestamp(
+            this.setGlobalTimestamp(
                 (startBlock.block.timestamp + i * secondsPerInterval) * 1000,
             );
             // Find Block: disable eslint because we try to optimize request count and not time taken
@@ -122,7 +114,7 @@ class EthereumDater implements IEthereumDater {
         high: number,
         low: number,
         blockTime: number,
-        position: BlockPosition = BlockPosition.Closest,
+        position: BlockPosition = "closest",
         depth: number = 0,
     ): Promise<DaterBlockInfo> {
         if (depth > this.maxRetries) {
@@ -146,7 +138,7 @@ class EthereumDater implements IEthereumDater {
             pos === low ||
             pos === high
         ) {
-            if (position ===  BlockPosition.Before && currentBlockTimestamp > this.timestamp) {
+            if (position ===  "before" && currentBlockTimestamp > this.timestamp) {
                 const prevBlock = await this.nodeClient.getBlock(
                     pos - 1,
                 );
@@ -155,7 +147,7 @@ class EthereumDater implements IEthereumDater {
                 pos -= 1;
             }
         
-            if (position ===  BlockPosition.After && currentBlockTimestamp < this.timestamp) {
+            if (position === "after" && currentBlockTimestamp < this.timestamp) {
                 const nextBlock = await this.nodeClient.getBlock(
                     pos + 1,
                 );
@@ -203,17 +195,22 @@ class EthereumDater implements IEthereumDater {
         }
     }
 
-    private getTimestamp(_date: number | string | Date) {
-        this.date = new Date(_date);
-        this.timestamp = this.date.getTime() / 1000;
+    private getFormattedTimestamp(date: number | string | Date): number {
+        const timestamp = new Date(date).getTime() / 1000;
 
-        if (!this.timestamp) {
+        if (!timestamp) {
             throw new Error("Invalid date");
-        } else if (this.timestamp < this.initialTimestamp) {
-            throw new Error(`Date ${_date} is before Ethereum genesis block`);
-        } else if (this.timestamp > Date.now() / 1000) {
-            throw new Error(`Date ${_date} is in the future`);
+        } else if (timestamp < this.initialTimestamp) {
+            throw new Error(`Date ${date} is before Ethereum genesis block`);
+        } else if (timestamp > Date.now() / 1000) {
+            throw new Error(`Date ${date} is in the future`);
         }
+
+        return timestamp;
+    }
+
+    private setGlobalTimestamp(date: number | string | Date) {
+        this.timestamp = this.getFormattedTimestamp(date);
     }
 }
 

@@ -94,10 +94,10 @@ describe("EthereumDater Test Suite", () => {
             expect.assertions(1);
 
             await ethersDater
-                .getBlocks("2020-12-31", "2021-1-1", 10000)
+                .getBlocks("1999-12-31", "2021-1-1", 10000)
                 .catch((err) => {
                     expect(err.message).toEqual(
-                        "Date 2015-07-30 is before Ethereum genesis block",
+                        "Date 1999-12-31 is before Ethereum genesis block",
                     );
                 });
         });
