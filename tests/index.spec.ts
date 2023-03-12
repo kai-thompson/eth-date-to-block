@@ -17,11 +17,11 @@ describe("EthereumDater Test Suite", () => {
 
     describe("Get Block", () => {
         it("should return the correct block number from ethers.js provider", async () => {
-            const { block } = await ethersDater.getBlock("2020-12-31");
+            const { block } = await ethersDater.getBlock("Wed Dec 30 2020 19:00:00 GMT-0500");
             expect(block.number).toEqual(11558516);
         });
         it("should return the correct block number from web3.js provider", async () => {
-            const { block } = await web3Dater.getBlock("2020-12-31");
+            const { block } = await web3Dater.getBlock("Wed Dec 30 2020 19:00:00 GMT-0500");
             expect(block.number).toEqual(11558516);
         });
         it("should handle if date is before genesis block", async () => {
@@ -40,23 +40,23 @@ describe("EthereumDater Test Suite", () => {
         });
         it("should return the closest block by default or when specified", async () => {
             const nonSpecifiedPosition = await ethersDater.getBlock(
-                "2020-12-31",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
             );
             const specifiedClosestPosition = await ethersDater.getBlock(
-                "2020-12-31",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
             );
             expect(nonSpecifiedPosition.block.number).toEqual(specifiedClosestPosition.block.number)
             expect(specifiedClosestPosition.block.number).toEqual(11558516);
         });
         it("should return the block number before when specified", async () => {
             const { block } = await ethersDater.getBlock(
-                "2020-12-31",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
                 "before",
             );
             expect(block.number).toEqual(11558516);
         });
         it("should return the block number after when specified", async () => {
-            const { block } = await ethersDater.getBlock("2020-12-31", "after");
+            const { block } = await ethersDater.getBlock("Wed Dec 30 2020 19:00:00 GMT-0500", "after");
             expect(block.number).toEqual(11558517);
         });
     });
@@ -64,8 +64,8 @@ describe("EthereumDater Test Suite", () => {
     describe("Get Blocks", () => {
         it("should return the correct block number from ethers.js provider", async () => {
             const blocks = await ethersDater.getBlocks(
-                "2020-12-31",
-                "2021-1-1",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
+                "Fri Jan 01 2021 00:00:00 GMT-0500",
                 10000,
             );
 
@@ -78,8 +78,8 @@ describe("EthereumDater Test Suite", () => {
         });
         it("should return the correct block number from web3.js provider", async () => {
             const blocks = await web3Dater.getBlocks(
-                "2020-12-31",
-                "2021-1-1",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
+                "Fri Jan 01 2021 00:00:00 GMT-0500",
                 10000,
             );
 
@@ -94,7 +94,7 @@ describe("EthereumDater Test Suite", () => {
             expect.assertions(1);
 
             await ethersDater
-                .getBlocks("1999-12-31", "2021-1-1", 10000)
+                .getBlocks("1999-12-31", "Fri Jan 01 2021 00:00:00 GMT-0500", 10000)
                 .catch((err) => {
                     expect(err.message).toEqual(
                         "Date 1999-12-31 is before Ethereum genesis block",
@@ -116,23 +116,23 @@ describe("EthereumDater Test Suite", () => {
             expect.assertions(1);
 
             await ethersDater
-                .getBlocks("2021-12-31", "2020-12-31", 1000)
+                .getBlocks("Thu Dec 30 2021 19:00:00 GMT-0500", "Wed Dec 30 2020 19:00:00 GMT-0500", 1000)
                 .catch((err) => {
                     expect(err.message).toEqual(
-                        "2020-12-31 is not before 2021-12-31",
+                        "Wed Dec 30 2020 19:00:00 GMT-0500 is not before Thu Dec 30 2021 19:00:00 GMT-0500",
                     );
                 });
         });
         it("should return the closest block by default or when specified", async () => {
             const [specifiedClosest, nonSpecifiedPosition] = await Promise.all([
-                ethersDater.getBlocks("2020-12-31", "2021-1-1", 10000, "closest"),
-                web3Dater.getBlocks("2020-12-31", "2021-1-1", 10000)
+                ethersDater.getBlocks("Wed Dec 30 2020 19:00:00 GMT-0500", "Fri Jan 01 2021 00:00:00 GMT-0500", 10000, "closest"),
+                web3Dater.getBlocks("Wed Dec 30 2020 19:00:00 GMT-0500", "Fri Jan 01 2021 00:00:00 GMT-0500", 10000)
             ]);
 
             expect(nonSpecifiedPosition).toEqual(specifiedClosest);
         });
         it("should return the block number before when specified", async () => {
-            const blocks = await ethersDater.getBlocks("2020-12-31", "2021-1-1", 10000, "before");
+            const blocks = await ethersDater.getBlocks("Wed Dec 30 2020 19:00:00 GMT-0500", "Fri Jan 01 2021 00:00:00 GMT-0500", 10000, "before");
             const blockNumbers = blocks.map((b) => b.block.number);
 
             expect(blockNumbers).toEqual([
@@ -142,8 +142,8 @@ describe("EthereumDater Test Suite", () => {
         });
         it("should return the block number after when specified", async () => {
             const blocks = await ethersDater.getBlocks(
-                "2020-12-31",
-                "2021-1-1",
+                "Wed Dec 30 2020 19:00:00 GMT-0500",
+                "Fri Jan 01 2021 00:00:00 GMT-0500",
                 10000,
                 "after",
             );
