@@ -15,6 +15,9 @@ module.exports = {
     ],
   },
   plugins: ["@typescript-eslint"],
-  rules: {},
+  rules: {
+    "no-param-reassign": "off",
+    "no-await-in-loop": "off",
+  },
   ignorePatterns: [".eslintrc.js", "jest.config.ts", "lib/**/*", "tests/**/*"],
 };
